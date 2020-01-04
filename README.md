@@ -1,3 +1,3 @@
 # apitest-dynamodb
 
-Include dynamodb interactions in apitest sequence diagrams 
+Include dynamodb interactions to apitest sequence diagrams 
