@@ -10,10 +10,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/steinfletcher/apitest"
 
-	"github.com/steinfletcher/apitest-dynamodb"
+	"github.com/steinfletcher/apitest-aws/recorder"
 )
 
-func TestGetUser(t *testing.T) {
+func GetUser(t *testing.T) {
 	test, db := apiTest()
 
 	handler := http.NewServeMux()
@@ -33,19 +33,19 @@ func TestGetUser(t *testing.T) {
 }
 
 func apiTest() (*apitest.APITest, dynamodbiface.DynamoDBAPI) {
-	recorder := apitest.NewTestRecorder()
-	db := recordingDB(recorder)
+	rec := apitest.NewTestRecorder()
+	db := recordingDB(rec)
 
 	return apitest.New().
-		Recorder(recorder).
+		Recorder(rec).
 		Report(apitest.SequenceDiagram()), db
 }
 
-func recordingDB(recorder *apitest.Recorder) dynamodbiface.DynamoDBAPI {
+func recordingDB(rec *apitest.Recorder) dynamodbiface.DynamoDBAPI {
 	sess := session.Must(session.NewSession(&aws.Config{
 		Region:   aws.String("localhost"),
 		Endpoint: aws.String("http://localhost:8000"),
 	}))
 	db := dynamodb.New(sess)
-	return dynamodbrecorder.New(db, recorder)
+	return recorder.NewDynamoDB(db, rec)
 }

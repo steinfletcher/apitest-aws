@@ -1,4 +1,4 @@
-package dynamodbrecorder
+package recorder
 
 import (
 	"fmt"
@@ -9,19 +9,19 @@ import (
 	"github.com/steinfletcher/apitest"
 )
 
-func New(cli dynamodbiface.DynamoDBAPI, recorder *apitest.Recorder) dynamodbiface.DynamoDBAPI {
-	return &dynamoRecorder{
+func NewDynamoDB(cli dynamodbiface.DynamoDBAPI, recorder *apitest.Recorder) dynamodbiface.DynamoDBAPI {
+	return &dynamoDBRecorder{
 		DynamoDBAPI: cli,
 		recorder:    recorder,
 	}
 }
 
-type dynamoRecorder struct {
+type dynamoDBRecorder struct {
 	dynamodbiface.DynamoDBAPI
 	recorder *apitest.Recorder
 }
 
-func (a dynamoRecorder) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput, error) {
+func (a dynamoDBRecorder) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput, error) {
 	a.recordInput("QueryInput", input.String())
 
 	output, err := a.DynamoDBAPI.Query(input)
@@ -36,7 +36,7 @@ func (a dynamoRecorder) Query(input *dynamodb.QueryInput) (*dynamodb.QueryOutput
 	return output, err
 }
 
-func (a dynamoRecorder) UpdateItem(input *dynamodb.UpdateItemInput) (*dynamodb.UpdateItemOutput, error) {
+func (a dynamoDBRecorder) UpdateItem(input *dynamodb.UpdateItemInput) (*dynamodb.UpdateItemOutput, error) {
 	a.recordInput("UpdateItemInput", input.String())
 
 	output, err := a.DynamoDBAPI.UpdateItem(input)
@@ -51,7 +51,7 @@ func (a dynamoRecorder) UpdateItem(input *dynamodb.UpdateItemInput) (*dynamodb.U
 	return output, err
 }
 
-func (a dynamoRecorder) PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error) {
+func (a dynamoDBRecorder) PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error) {
 	a.recordInput("PutItemInput", input.String())
 
 	output, err := a.DynamoDBAPI.PutItem(input)
@@ -66,7 +66,7 @@ func (a dynamoRecorder) PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutItem
 	return output, err
 }
 
-func (a dynamoRecorder) recordInput(operation, body string) {
+func (a dynamoDBRecorder) recordInput(operation, body string) {
 	a.recorder.AddMessageRequest(apitest.MessageRequest{
 		Source:    apitest.SystemUnderTestDefaultName,
 		Target:    "DynamoDB",
@@ -76,7 +76,7 @@ func (a dynamoRecorder) recordInput(operation, body string) {
 	})
 }
 
-func (a dynamoRecorder) recordOutput(operation, body string, err error) {
+func (a dynamoDBRecorder) recordOutput(operation, body string, err error) {
 	if err != nil {
 		a.recorder.AddMessageResponse(apitest.MessageResponse{
 			Source:    "DynamoDB",

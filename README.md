@@ -1,7 +1,13 @@
-# apitest-dynamodb
+# apitest-aws
 
-Include dynamodb interactions to apitest sequence diagrams.
+Utilities for working with apitest and AWS.
 
-# Notes
+## Recorder
 
-Not all methods in the dynamodb API are implemented. Please feel free to submit a PR to add new methods.
+Render AWS service interactions on apitest sequence diagrams. Services currently supported:
+
+- DynamoDB
+
+Coming soon:
+
+- S3
