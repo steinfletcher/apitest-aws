@@ -66,6 +66,22 @@ func (a dynamoDBRecorder) PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutIt
 	return output, err
 }
 
+func (a dynamoDBRecorder) GetItem(input *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error) {
+	a.recordInput("GetItemInput", input.String())
+
+	output, err := a.DynamoDBAPI.GetItem(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	a.recordOutput("GetItemOutput", body, err)
+
+	return output, err
+}
+
+
 func (a dynamoDBRecorder) recordInput(operation, body string) {
 	a.recorder.AddMessageRequest(apitest.MessageRequest{
 		Source:    apitest.SystemUnderTestDefaultName,
