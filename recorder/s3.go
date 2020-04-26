@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/steinfletcher/apitest"
@@ -15,8 +16,8 @@ const outputLimitBytes = 1024
 
 func NewS3(cli s3iface.S3API, recorder *apitest.Recorder) s3iface.S3API {
 	return &s3Recorder{
-		S3API: cli,
-		recorder:    recorder,
+		S3API:    cli,
+		recorder: recorder,
 	}
 }
 
@@ -49,6 +50,81 @@ func (r s3Recorder) GetObject(input *s3.GetObjectInput) (*s3.GetObjectOutput, er
 	}
 
 	r.recordOutput("GetObjectOutput", body, err)
+
+	return output, err
+}
+
+func (r s3Recorder) CreateMultipartUpload(input *s3.CreateMultipartUploadInput) (*s3.CreateMultipartUploadOutput, error) {
+	r.recordInput("CreateMultipartUploadInput", input.String())
+
+	output, err := r.S3API.CreateMultipartUpload(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("CreateMultipartUploadOutput", body, err)
+
+	return output, err
+}
+
+func (r s3Recorder) CompleteMultipartUpload(input *s3.CompleteMultipartUploadInput) (*s3.CompleteMultipartUploadOutput, error) {
+	r.recordInput("CompleteMultipartUploadInput", input.String())
+
+	output, err := r.S3API.CompleteMultipartUpload(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("CompleteMultipartUploadOutput", body, err)
+
+	return output, err
+}
+
+func (r s3Recorder) UploadPartRequest(input *s3.UploadPartInput) (*request.Request, *s3.UploadPartOutput) {
+	r.recordInput("UploadPartInput", input.String())
+
+	req, output := r.S3API.UploadPartRequest(input)
+
+	var body string
+	if req != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("UploadPartOutput", body, nil)
+
+	return req, output
+}
+
+func (r s3Recorder) ListParts(input *s3.ListPartsInput) (*s3.ListPartsOutput, error) {
+	r.recordInput("ListPartsInput", input.String())
+
+	output, err := r.S3API.ListParts(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("ListPartsOutput", body, nil)
+
+	return output, err
+}
+
+func (r s3Recorder) AbortMultipartUpload(input *s3.AbortMultipartUploadInput) (*s3.AbortMultipartUploadOutput, error) {
+	r.recordInput("AbortMultipartUploadInput", input.String())
+
+	output, err := r.S3API.AbortMultipartUpload(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("AbortMultipartUploadOutput", body, nil)
 
 	return output, err
 }
