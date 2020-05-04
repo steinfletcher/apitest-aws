@@ -54,6 +54,51 @@ func (r s3Recorder) GetObject(input *s3.GetObjectInput) (*s3.GetObjectOutput, er
 	return output, err
 }
 
+func (r s3Recorder) ListObjects(input *s3.ListObjectsInput) (*s3.ListObjectsOutput, error) {
+	r.recordInput("ListObjectsInput", input.String())
+
+	output, err := r.S3API.ListObjects(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("ListObjectsOutput", body, nil)
+
+	return output, err
+}
+
+func (r s3Recorder) ListObjectsV2(input *s3.ListObjectsV2Input) (*s3.ListObjectsV2Output, error) {
+	r.recordInput("ListObjectsV2Input", input.String())
+
+	output, err := r.S3API.ListObjectsV2(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("ListObjectsV2Output", body, nil)
+
+	return output, err
+}
+
+func (r s3Recorder) HeadObject(input *s3.HeadObjectInput) (*s3.HeadObjectOutput, error) {
+	r.recordInput("HeadObjectInput", input.String())
+
+	output, err := r.S3API.HeadObject(input)
+
+	var body string
+	if output != nil {
+		body = output.String()
+	}
+
+	r.recordOutput("HeadObjectOutput", body, nil)
+
+	return output, err
+}
+
 func (r s3Recorder) CreateMultipartUpload(input *s3.CreateMultipartUploadInput) (*s3.CreateMultipartUploadOutput, error) {
 	r.recordInput("CreateMultipartUploadInput", input.String())
 
